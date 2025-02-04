@@ -1,3 +1,7 @@
 .venv
 *.avi
 *.mp4
+out/
+seg/
+__pycache__/
+output.txt
