@@ -12,15 +12,16 @@ class IdentifyThread(Thread):
         self.mutex = Lock()
         self.model_car =  get_model(modeldesc["car"], modeldesc["key"])
         self.model_people = get_model(modeldesc["people"], modeldesc["key"])
+        self.model_signs = get_model(modeldesc["signs"], modeldesc["key"])
     
-
-    def processFrame(self, frame, model):
+    def processFrame(self, frame, model, color):
     
         result = model.infer(frame)[0]
         detec = sv.Detections.from_inference(result)
+        detec = detec[detec.confidence > 0.70]
 
-        bounding_box_annotator = sv.BoxAnnotator()
-        label_annotator = sv.LabelAnnotator()
+        bounding_box_annotator = sv.BoxAnnotator(color=color)
+        label_annotator = sv.LabelAnnotator(color=color)
 
         labels = [
         f"{class_name} {confidence:.2f}"
@@ -49,10 +50,11 @@ class IdentifyThread(Thread):
             
             count += 1
 
-            thread_car = Thread(target=self.processFrame, args=(frame, self.model_car))
-            thread_people = Thread(target=self.processFrame, args=(frame, self.model_people))
+            thread_car = Thread(target=self.processFrame, args=(frame, self.model_car, sv.Color.BLUE))
+            thread_people = Thread(target=self.processFrame, args=(frame, self.model_people, sv.Color.ROBOFLOW))
+            thread_sign = Thread(target=self.processFrame, args=(frame, self.model_signs, sv.Color.RED))
 
-            threads = [thread_car, thread_people]
+            threads = [thread_car, thread_people, thread_sign]
             
             for x in threads:
                 x.start()

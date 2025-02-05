@@ -18,6 +18,8 @@ if(shutil.os.path.exists("out")):
   shutil.rmtree("out")
 shutil.os.mkdir("out")
 
+shutil.os.remove("result.avi")
+
 mutex = Lock()
 
 cap = cv2.VideoCapture("video.mp4")
@@ -45,6 +47,7 @@ subprocess.run(cmd)
 modelDesc = {
    "car" :  "car-detection-nxsxm-yz6pa-t0cjs-ezgxf/1",
    "people" : "people-4evn7-fqlf8-d887c/2",
+   "signs" : "placas-de-transito-sm6dy/3",
    "key" : ROBOFLOW_KEY
 }
 
